@@ -37,7 +37,7 @@ Set the following build configuration:
 | **Build command** | `npm run build` |
 | **Build output directory** | `.next` |
 | **Root directory** | `/` |
-| **Node version** | `18` |
+| **Node version** | `20` |
 
 ### Step 3: Add Environment Variables
 
