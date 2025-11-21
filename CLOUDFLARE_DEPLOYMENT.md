@@ -146,6 +146,7 @@ npx convex deploy
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `NEXT_PUBLIC_CONVEX_URL` | Convex deployment URL | `https://xxx.convex.cloud` |
+| `CONVEX_DEPLOYMENT` | Convex deployment name | `happy-otter-123` (from convex dashboard) |
 | `CONVEX_DEPLOY_KEY` | Convex deployment key | `prod:xxx` |
 | `WORKOS_API_KEY` | WorkOS API key | `sk_live_xxx` |
 | `WORKOS_CLIENT_ID` | WorkOS Client ID | `client_xxx` |
