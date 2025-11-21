@@ -1,0 +1,21 @@
+
+> akademyx-landing@0.1.0 build
+> next build
+
+  Ôû▓ Next.js 14.2.33
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully
+   Linting and checking validity of types ...
+Failed to compile.
+
+./convex/auth.ts:2:33
+Type error: Cannot find module './_generated/server' or its corresponding type declarations.
+
+  1 | import { v } from "convex/values";
+> 2 | import { mutation, query } from "./_generated/server";
+    |                                 ^
+  3 |
+  4 | // User authentication schema
+  5 | export const authUserSchema = v.object({
+Next.js build worker exited with code: 1 and signal: null

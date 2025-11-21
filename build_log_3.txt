@@ -1,0 +1,22 @@
+
+> akademyx-landing@0.1.0 build
+> next build
+
+  Ôû▓ Next.js 14.2.33
+
+   Creating an optimized production build ...
+ Ô£ô Compiled successfully
+   Linting and checking validity of types ...
+Failed to compile.
+
+./convex/crud.ts:74:7
+Type error: Unused '@ts-expect-error' directive.
+
+  72 |   handler: async (ctx, args) => {
+  73 |     return await ctx.db.query("applications")
+> 74 |       // @ts-expect-error - Convex filter callback types are inferred
+     |       ^
+  75 |       .filter((q) => q.eq(q.field("status"), args.status))
+  76 |       .collect();
+  77 |   },
+Next.js build worker exited with code: 1 and signal: null

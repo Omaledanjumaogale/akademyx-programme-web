@@ -1,6 +1,13 @@
-const resend: any = {
+interface EmailOptions {
+  from: string;
+  to: string;
+  subject: string;
+  html: string;
+}
+
+const resend = {
   emails: {
-    send: async (_opts: any) => {
+    send: async (_opts: EmailOptions) => {
       return { id: `stub_${Date.now()}` }
     }
   }

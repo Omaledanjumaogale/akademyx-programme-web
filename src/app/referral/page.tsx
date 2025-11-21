@@ -1,6 +1,13 @@
-"use client"
+'use client'
 
-import ReferralSection from "@/components/ReferralSection"
+import dynamicImport from 'next/dynamic'
+
+const ReferralSection = dynamicImport(() => import('@/components/ReferralSection').then(mod => ({ default: mod.ReferralSection })), {
+  ssr: false,
+  loading: () => <div className="animate-pulse bg-gray-100 h-96 rounded-lg"></div>
+})
+
+export const dynamic = 'force-dynamic'
 
 export default function ReferralPage() {
   return (

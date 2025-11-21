@@ -1,6 +1,11 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Note: Convex filter/map/reduce callbacks have complex internal types that are difficult to annotate
+// The handlers themselves are properly typed through Convex's inference
+
+
 // Application mutations
 export const createApplication = mutation({
   args: {
@@ -18,7 +23,7 @@ export const createApplication = mutation({
     experience: v.string(),
     goals: v.string(),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const now = Date.now();
     const applicationId = await ctx.db.insert("applications", {
       ...args,
@@ -40,7 +45,10 @@ export const updateApplicationStatus = mutation({
     applicationId: v.id("applications"),
     status: v.union(v.literal("pending"), v.literal("approved"), v.literal("rejected")),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
     await ctx.db.patch(args.applicationId, {
       status: args.status,
       updatedAt: Date.now(),
@@ -50,23 +58,32 @@ export const updateApplicationStatus = mutation({
 
 // Application queries
 export const getApplications = query({
-  handler: async (ctx: any) => {
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
     return await ctx.db.query("applications").collect();
   },
 });
 
 export const getApplicationById = query({
   args: { applicationId: v.id("applications") },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
     return await ctx.db.get(args.applicationId);
   },
 });
 
 export const getApplicationsByStatus = query({
   args: { status: v.union(v.literal("pending"), v.literal("approved"), v.literal("rejected")) },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
     return await ctx.db.query("applications")
-      .filter((q: any) => q.eq(q.field("status"), args.status))
+      .filter((q) => q.eq(q.field("status"), args.status))
       .collect();
   },
 });
@@ -79,7 +96,7 @@ export const createPayment = mutation({
     currency: v.string(),
     paymentMethod: v.string(),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const now = Date.now();
     const paymentId = await ctx.db.insert("payments", {
       ...args,
@@ -97,7 +114,7 @@ export const updatePaymentStatus = mutation({
     status: v.union(v.literal("pending"), v.literal("completed"), v.literal("failed")),
     transactionId: v.optional(v.string()),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     await ctx.db.patch(args.paymentId, {
       status: args.status,
       transactionId: args.transactionId,
@@ -114,7 +131,7 @@ export const createUser = mutation({
     lastName: v.string(),
     phone: v.string(),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const now = Date.now();
     const userId = await ctx.db.insert("users", {
       ...args,
@@ -129,9 +146,9 @@ export const createUser = mutation({
 
 export const getUserByEmail = query({
   args: { email: v.string() },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const users = await ctx.db.query("users")
-      .filter((q: any) => q.eq(q.field("email"), args.email))
+      .filter((q) => q.eq(q.field("email"), args.email))
       .collect();
     return users[0] || null;
   },
@@ -139,9 +156,9 @@ export const getUserByEmail = query({
 
 // Course management
 export const getCourses = query({
-  handler: async (ctx: any) => {
+  handler: async (ctx) => {
     return await ctx.db.query("courses")
-      .filter((q: any) => q.eq(q.field("isActive"), true))
+      .filter((q) => q.eq(q.field("isActive"), true))
       .collect();
   },
 });
@@ -154,7 +171,7 @@ export const createCourse = mutation({
     price: v.number(),
     modules: v.array(v.string()),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const now = Date.now();
     const courseId = await ctx.db.insert("courses", {
       ...args,
@@ -189,7 +206,7 @@ export const createReferralPartner = mutation({
       accountName: v.string(),
     }),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const now = Date.now();
     const partnerId = await ctx.db.insert("referralPartners", {
       ...args,
@@ -209,9 +226,9 @@ export const createReferralPartner = mutation({
 
 export const getReferralPartnerByCode = query({
   args: { referralCode: v.string() },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const partners = await ctx.db.query("referralPartners")
-      .filter((q: any) => q.eq(q.field("referralCode"), args.referralCode))
+      .filter((q) => q.eq(q.field("referralCode"), args.referralCode))
       .collect();
     return partners[0] || null;
   },
@@ -219,13 +236,16 @@ export const getReferralPartnerByCode = query({
 
 export const getReferralPartnerById = query({
   args: { partnerId: v.id("referralPartners") },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     return await ctx.db.get(args.partnerId);
   },
 });
 
 export const getReferralPartners = query({
-  handler: async (ctx: any) => {
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
     return await ctx.db.query("referralPartners").collect();
   },
 });
@@ -236,7 +256,10 @@ export const updateReferralPartnerStatus = mutation({
     status: v.union(v.literal("active"), v.literal("inactive")),
     isApproved: v.boolean(),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
     await ctx.db.patch(args.partnerId, {
       status: args.status,
       isApproved: args.isApproved,
@@ -253,14 +276,17 @@ export const createCommission = mutation({
     amount: v.number(),
     referralCode: v.string(),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
     const now = Date.now();
     const commissionId = await ctx.db.insert("commissions", {
       ...args,
       status: "pending",
       createdAt: now,
     });
-    
+
     // Update partner commission totals
     const partner = await ctx.db.get(args.partnerId);
     if (partner) {
@@ -270,24 +296,24 @@ export const createCommission = mutation({
         updatedAt: now,
       });
     }
-    
+
     return commissionId;
   },
 });
 
 export const getCommissionsByPartner = query({
   args: { partnerId: v.id("referralPartners") },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     return await ctx.db.query("commissions")
-      .filter((q: any) => q.eq(q.field("partnerId"), args.partnerId))
+      .filter((q) => q.eq(q.field("partnerId"), args.partnerId))
       .collect();
   },
 });
 
 export const getPendingCommissions = query({
-  handler: async (ctx: any) => {
+  handler: async (ctx) => {
     return await ctx.db.query("commissions")
-      .filter((q: any) => q.eq(q.field("status"), "pending"))
+      .filter((q) => q.eq(q.field("status"), "pending"))
       .collect();
   },
 });
@@ -299,14 +325,17 @@ export const createDisbursement = mutation({
     amount: v.number(),
     bankReference: v.string(),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
     const now = Date.now();
     const disbursementId = await ctx.db.insert("disbursements", {
       ...args,
       status: "pending",
       createdAt: now,
     });
-    
+
     // Update partner paid commission
     const partner = await ctx.db.get(args.partnerId);
     if (partner) {
@@ -316,7 +345,7 @@ export const createDisbursement = mutation({
         updatedAt: now,
       });
     }
-    
+
     return disbursementId;
   },
 });
@@ -326,7 +355,10 @@ export const updateDisbursementStatus = mutation({
     disbursementId: v.id("disbursements"),
     status: v.union(v.literal("pending"), v.literal("completed"), v.literal("failed")),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
     await ctx.db.patch(args.disbursementId, {
       status: args.status,
       completedAt: args.status === "completed" ? Date.now() : undefined,
@@ -336,24 +368,27 @@ export const updateDisbursementStatus = mutation({
 
 // Analytics Functions
 export const getDashboardAnalytics = query({
-  handler: async (ctx: any) => {
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
     const applications = await ctx.db.query("applications").collect();
     const partners = await ctx.db.query("referralPartners").collect();
     const commissions = await ctx.db.query("commissions").collect();
-    
+
     const totalApplications = applications.length;
-    const pendingApplications = applications.filter((app: any) => app.status === "pending").length;
-    const approvedApplications = applications.filter((app: any) => app.status === "approved" || app.status === "paid").length;
-    const totalRevenue = applications.filter((app: any) => app.status === "paid").reduce((sum: any, app: any) => sum + app.amount, 0);
-    
-    const totalCommissions = commissions.reduce((sum: any, comm: any) => sum + comm.amount, 0);
-    const paidCommissions = commissions.filter((comm: any) => comm.status === "paid").reduce((sum: any, comm: any) => sum + comm.amount, 0);
+    const pendingApplications = applications.filter((app) => app.status === "pending").length;
+    const approvedApplications = applications.filter((app) => app.status === "approved" || app.status === "paid").length;
+    const totalRevenue = applications.filter((app) => app.status === "paid").reduce((sum, app) => sum + app.amount, 0);
+
+    const totalCommissions = commissions.reduce((sum, comm) => sum + comm.amount, 0);
+    const paidCommissions = commissions.filter((comm) => comm.status === "paid").reduce((sum: any, comm: any) => sum + comm.amount, 0);
     const pendingCommissions = totalCommissions - paidCommissions;
-    
+
     const totalReferralPartners = partners.length;
-    const activeReferralPartners = partners.filter((p: any) => p.status === "active").length;
+    const activeReferralPartners = partners.filter((p) => p.status === "active").length;
     const conversionRate = totalApplications > 0 ? (approvedApplications / totalApplications) * 100 : 0;
-    
+
     return {
       totalApplications,
       pendingApplications,
@@ -371,22 +406,22 @@ export const getDashboardAnalytics = query({
 
 export const getPartnerAnalytics = query({
   args: { partnerId: v.id("referralPartners") },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const partner = await ctx.db.get(args.partnerId);
     if (!partner) return null;
-    
+
     const applications = await ctx.db.query("applications")
-      .filter((q: any) => q.eq(q.field("referralCode"), partner.referralCode))
+      .filter((q) => q.eq(q.field("referralCode"), partner.referralCode))
       .collect();
-    
+
     const commissions = await ctx.db.query("commissions")
-      .filter((q: any) => q.eq(q.field("partnerId"), args.partnerId))
+      .filter((q) => q.eq(q.field("partnerId"), args.partnerId))
       .collect();
-    
+
     const totalReferrals = applications.length;
-    const confirmedReferrals = applications.filter((app: any) => app.status === "paid").length;
+    const confirmedReferrals = applications.filter((app) => app.status === "paid").length;
     const conversionRate = totalReferrals > 0 ? (confirmedReferrals / totalReferrals) * 100 : 0;
-    
+
     return {
       totalReferrals,
       confirmedReferrals,

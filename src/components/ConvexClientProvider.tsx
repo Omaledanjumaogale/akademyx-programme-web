@@ -1,8 +1,22 @@
 "use client"
 import { ReactNode, useMemo } from "react"
-import { ConvexProvider, ConvexReactClient } from "convex/react"
+import { ConvexReactClient, ConvexProviderWithAuth } from "convex/react"
+import { useAuth } from "./auth/AuthProvider"
 
 export function ConvexClientProvider({ children }: { children: ReactNode }) {
   const convex = useMemo(() => new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL as string), [])
-  return <ConvexProvider client={convex}>{children}</ConvexProvider>
+  const { isAuthenticated, isLoading, fetchAccessToken } = useAuth()
+
+  return (
+    <ConvexProviderWithAuth
+      client={convex}
+      useAuth={() => ({
+        isLoading,
+        isAuthenticated,
+        fetchAccessToken,
+      })}
+    >
+      {children}
+    </ConvexProviderWithAuth>
+  )
 }

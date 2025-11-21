@@ -23,15 +23,15 @@ export const createOrUpdateAuthUser = mutation({
     lastName: v.optional(v.string()),
     role: v.optional(v.union(v.literal("user"), v.literal("admin"))),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const now = Date.now();
-    
+
     // Check if user already exists
     const existingUser = await ctx.db
       .query("authUsers")
       .filter((q: any) => q.eq(q.field("workosUserId"), args.workosUserId))
       .first();
-    
+
     if (existingUser) {
       // Update existing user
       await ctx.db.patch(existingUser._id, {
@@ -63,7 +63,7 @@ export const createOrUpdateAuthUser = mutation({
 // Get user by WorkOS ID
 export const getAuthUserByWorkOSId = query({
   args: { workosUserId: v.string() },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const user = await ctx.db
       .query("authUsers")
       .filter((q: any) => q.eq(q.field("workosUserId"), args.workosUserId))
@@ -75,7 +75,7 @@ export const getAuthUserByWorkOSId = query({
 // Get user by email
 export const getAuthUserByEmail = query({
   args: { email: v.string() },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     const user = await ctx.db
       .query("authUsers")
       .filter((q: any) => q.eq(q.field("email"), args.email))
@@ -90,7 +90,7 @@ export const updateUserRole = mutation({
     userId: v.id("authUsers"),
     role: v.union(v.literal("user"), v.literal("admin")),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     await ctx.db.patch(args.userId, {
       role: args.role,
       updatedAt: Date.now(),
@@ -103,7 +103,7 @@ export const deactivateUser = mutation({
   args: {
     userId: v.id("authUsers"),
   },
-  handler: async (ctx: any, args: any) => {
+  handler: async (ctx, args) => {
     await ctx.db.patch(args.userId, {
       isActive: false,
       updatedAt: Date.now(),
