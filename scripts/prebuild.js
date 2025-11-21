@@ -15,14 +15,21 @@ if (!convexUrl) {
     process.exit(1);
 }
 
+// Extract deployment name from URL (e.g., "fleet-stingray-490" from "https://fleet-stingray-490.convex.cloud")
+const deploymentName = convexUrl.replace('https://', '').replace('.convex.cloud', '').trim();
+
 console.log('🔧 Generating Convex code...');
 console.log(`📡 Using Convex URL: ${convexUrl}`);
+console.log(`📦 Deployment name: ${deploymentName}`);
 
 try {
-    // Run convex codegen with the URL
+    // Run convex codegen with the URL and set CONVEX_DEPLOYMENT
     execSync(`npx convex codegen --url "${convexUrl}"`, {
         stdio: 'inherit',
-        env: { ...process.env }
+        env: {
+            ...process.env,
+            CONVEX_DEPLOYMENT: deploymentName
+        }
     });
 
     console.log('✅ Convex code generated successfully!');
