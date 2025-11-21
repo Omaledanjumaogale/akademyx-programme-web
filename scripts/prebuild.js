@@ -8,6 +8,7 @@
 const { execSync } = require('child_process');
 
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
+const deployKey = process.env.CONVEX_DEPLOY_KEY;
 
 if (!convexUrl) {
     console.error('❌ Error: NEXT_PUBLIC_CONVEX_URL environment variable is not set');
@@ -21,15 +22,24 @@ const deploymentName = convexUrl.replace('https://', '').replace('.convex.cloud'
 console.log('🔧 Generating Convex code...');
 console.log(`📡 Using Convex URL: ${convexUrl}`);
 console.log(`📦 Deployment name: ${deploymentName}`);
+console.log(`🔑 Deploy key: ${deployKey ? 'Set ✓' : 'Not set (may cause auth errors)'}`);
 
 try {
-    // Run convex codegen with the URL and set CONVEX_DEPLOYMENT
+    // Prepare environment variables
+    const env = {
+        ...process.env,
+        CONVEX_DEPLOYMENT: deploymentName
+    };
+
+    // Add deploy key if available
+    if (deployKey) {
+        env.CONVEX_DEPLOY_KEY = deployKey;
+    }
+
+    // Run convex codegen with the URL
     execSync(`npx convex codegen --url "${convexUrl}"`, {
         stdio: 'inherit',
-        env: {
-            ...process.env,
-            CONVEX_DEPLOYMENT: deploymentName
-        }
+        env: env
     });
 
     console.log('✅ Convex code generated successfully!');
