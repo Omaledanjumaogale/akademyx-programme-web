@@ -4,68 +4,65 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Menu, X, User, LogIn, LogOut } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/components/auth/AuthProvider"
 
 export default function LandingHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { user, isLoading, isAuthenticated, login, logout } = useAuth()
+  const router = useRouter()
 
   const handleLogin = (type: 'user' | 'admin') => {
     if (type === 'admin') {
-      // For admin, we'll redirect to admin dashboard
-      window.location.href = '/dashboard/admin'
+      router.push('/dashboard/admin')
     } else {
-      // For regular users, use WorkOS AuthKit
       login()
     }
   }
 
   const handleSignup = () => {
-    // Redirect to WorkOS AuthKit signup
-    window.location.href = '/auth/signup'
+    router.push('/application')
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-purple-100">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">A</span>
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-all duration-300 group-hover:scale-105">
+              <span className="text-white font-bold text-lg font-heading">A</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">Akademyx</span>
+            <span className="text-2xl font-bold text-foreground font-heading tracking-tight">Akademyx</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/courses" className="text-gray-700 hover:text-purple-600 transition-colors">
-              Courses
-            </Link>
-            <Link href="/certifications" className="text-gray-700 hover:text-purple-600 transition-colors">
-              Certifications
-            </Link>
-            <Link href="/referral" className="text-gray-700 hover:text-purple-600 transition-colors">
-              Refer & Earn
-            </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-purple-600 transition-colors">
-              Contact
-            </Link>
+            {['Courses', 'Certifications', 'Refer & Earn', 'Contact'].map((item) => (
+              <Link
+                key={item}
+                href={item === 'Refer & Earn' ? '/referral' : `/${item.toLowerCase()}`}
+                className="text-muted-foreground hover:text-primary font-medium transition-colors relative group"
+              >
+                {item}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
+              </Link>
+            ))}
           </nav>
 
           {/* Desktop Login Buttons */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-4">
             {isLoading ? (
-              <div className="text-gray-600">Loading...</div>
+              <div className="text-muted-foreground animate-pulse">Loading...</div>
             ) : isAuthenticated ? (
               <>
-                <Link href="/dashboard" className="text-gray-700 hover:text-purple-600 transition-colors">
+                <Link href="/dashboard" className="text-muted-foreground hover:text-primary font-medium transition-colors">
                   Dashboard
                 </Link>
                 <Button
                   variant="outline"
                   onClick={logout}
-                  className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
+                  className="border-primary/20 text-primary hover:bg-primary/5 hover:text-primary hover:border-primary/50"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
@@ -74,23 +71,23 @@ export default function LandingHeader() {
             ) : (
               <>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   onClick={() => handleLogin('user')}
-                  className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
+                  className="text-muted-foreground hover:text-primary hover:bg-primary/5"
                 >
                   <User className="w-4 h-4 mr-2" />
                   Login
                 </Button>
                 <Button
                   onClick={handleSignup}
-                  className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700"
+                  className="shadow-lg shadow-primary/25 hover:shadow-primary/40"
                 >
                   Sign Up
                 </Button>
                 <Button
                   variant="ghost"
                   onClick={() => handleLogin('admin')}
-                  className="text-gray-600 hover:text-purple-600"
+                  className="text-muted-foreground hover:text-primary hover:bg-primary/5"
                 >
                   <LogIn className="w-4 h-4 mr-2" />
                   Admin
@@ -103,9 +100,9 @@ export default function LandingHeader() {
           <div className="md:hidden">
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-600"
+              className="text-muted-foreground hover:text-primary hover:bg-primary/5"
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </Button>
@@ -114,30 +111,28 @@ export default function LandingHeader() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden border-t border-purple-100 py-4">
-            <nav className="flex flex-col space-y-4 mb-6">
-              <Link href="/courses" className="text-gray-700 hover:text-purple-600 transition-colors" onClick={() => setIsMenuOpen(false)}>
-                Courses
-              </Link>
-              <Link href="/certifications" className="text-gray-700 hover:text-purple-600 transition-colors" onClick={() => setIsMenuOpen(false)}>
-                Certifications
-              </Link>
-              <Link href="/referral" className="text-gray-700 hover:text-purple-600 transition-colors" onClick={() => setIsMenuOpen(false)}>
-                Refer & Earn
-              </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-purple-600 transition-colors" onClick={() => setIsMenuOpen(false)}>
-                Contact
-              </Link>
+          <div className="md:hidden border-t border-border py-6 bg-background/95 backdrop-blur-xl absolute left-0 right-0 px-4 shadow-2xl animate-in slide-in-from-top-5">
+            <nav className="flex flex-col space-y-4 mb-8">
+              {['Courses', 'Certifications', 'Refer & Earn', 'Contact'].map((item) => (
+                <Link
+                  key={item}
+                  href={item === 'Refer & Earn' ? '/referral' : `/${item.toLowerCase()}`}
+                  className="text-lg font-medium text-muted-foreground hover:text-primary transition-colors px-2 py-1"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item}
+                </Link>
+              ))}
             </nav>
-            
-            <div className="flex flex-col space-y-3">
+
+            <div className="flex flex-col space-y-4">
               {isLoading ? (
-                <div className="text-gray-600 text-center">Loading...</div>
+                <div className="text-muted-foreground text-center">Loading...</div>
               ) : isAuthenticated ? (
                 <>
-                  <Link 
-                    href="/dashboard" 
-                    className="text-center text-gray-700 hover:text-purple-600 transition-colors py-2"
+                  <Link
+                    href="/dashboard"
+                    className="text-center text-lg font-medium text-muted-foreground hover:text-primary transition-colors py-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dashboard
@@ -148,7 +143,7 @@ export default function LandingHeader() {
                       logout()
                       setIsMenuOpen(false)
                     }}
-                    className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white w-full"
+                    className="w-full border-primary/20 text-primary"
                   >
                     <LogOut className="w-4 h-4 mr-2" />
                     Logout
@@ -162,7 +157,7 @@ export default function LandingHeader() {
                       handleLogin('user')
                       setIsMenuOpen(false)
                     }}
-                    className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white w-full"
+                    className="w-full border-primary/20 text-primary hover:bg-primary/5"
                   >
                     <User className="w-4 h-4 mr-2" />
                     User Login
@@ -172,7 +167,7 @@ export default function LandingHeader() {
                       handleSignup()
                       setIsMenuOpen(false)
                     }}
-                    className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700 w-full"
+                    className="w-full shadow-lg shadow-primary/25"
                   >
                     Sign Up
                   </Button>
@@ -182,7 +177,7 @@ export default function LandingHeader() {
                       handleLogin('admin')
                       setIsMenuOpen(false)
                     }}
-                    className="text-gray-600 hover:text-purple-600 w-full"
+                    className="w-full text-muted-foreground hover:text-primary"
                   >
                     <LogIn className="w-4 h-4 mr-2" />
                     Admin Login

@@ -25,7 +25,7 @@ export default function InstitutionDashboardPage() {
     const router = useRouter()
 
     // Fetch referral partner data
-    const referralPartners = useQuery(api.crud.listReferralPartners)
+    const referralPartners = useQuery(api.crud.getReferralPartners)
 
     // Find current user's partner profile (if exists)
     const currentPartner = referralPartners?.find((p: any) => p.email === user?.email)

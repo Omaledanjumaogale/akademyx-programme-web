@@ -1,4 +1,6 @@
+import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { authTables } from "@convex-dev/auth/server";
 
 export const applicationSchema = v.object({
   firstName: v.string(),
@@ -117,4 +119,16 @@ export const authUserSchema = v.object({
   lastLoginAt: v.optional(v.number()),
   createdAt: v.number(),
   updatedAt: v.number(),
+});
+
+export default defineSchema({
+  ...authTables,
+  applications: defineTable(applicationSchema),
+  payments: defineTable(paymentSchema),
+  users: defineTable(userSchema),
+  courses: defineTable(courseSchema),
+  referralPartners: defineTable(referralPartnerSchema),
+  commissions: defineTable(commissionSchema),
+  disbursements: defineTable(disbursementSchema),
+  authUsers: defineTable(authUserSchema),
 });

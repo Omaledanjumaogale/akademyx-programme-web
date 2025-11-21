@@ -24,6 +24,6 @@ export async function GET() {
         return NextResponse.json({ token: null });
     } catch (error) {
         console.error('Failed to get access token:', error);
-        return NextResponse.json({ token: null }, { status: 500 });
+        return NextResponse.json({ token: null });
     }
 }

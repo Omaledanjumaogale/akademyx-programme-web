@@ -6,13 +6,18 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from 'convex/react'
 import { api } from '@/convex/_generated/api'
 import { applicationFormSchema, type ApplicationFormData } from '@/lib/validation'
-import { Loader2 } from 'lucide-react'
+import { Loader2, User, Mail, Phone, MapPin, Briefcase, Hash, Calendar, Target, Award } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
 
 export function ApplicationForm() {
+    const router = useRouter()
     const [isMounted, setIsMounted] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [submitSuccess, setSubmitSuccess] = useState(false)
+    const [submitError, setSubmitError] = useState<string | null>(null)
     const createApplication = useMutation(api.crud.createApplication)
 
     useEffect(() => {
@@ -30,198 +35,184 @@ export function ApplicationForm() {
 
     const onSubmit = async (data: ApplicationFormData) => {
         setIsSubmitting(true)
+        setSubmitError(null)
         try {
             await createApplication(data)
-            setSubmitSuccess(true)
             reset()
+            router.push('/checkout')
         } catch (error) {
             console.error('Error submitting application:', error)
-            // TODO: Show error toast
+            setSubmitError('Failed to submit application. Please try again.')
         } finally {
             setIsSubmitting(false)
         }
     }
 
     if (!isMounted) {
-        return <div className="animate-pulse bg-gray-100 h-96 rounded-lg"></div>
-    }
-
-    if (submitSuccess) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-green-50 p-8 rounded-lg text-center"
-            >
-                <h3 className="text-2xl font-bold text-green-800 mb-4">Application Received!</h3>
-                <p className="text-green-700 mb-6">
-                    Thank you for applying to the Akademyx Masterclass Programme. We will review your application and get back to you shortly.
-                </p>
-                <button
-                    onClick={() => setSubmitSuccess(false)}
-                    className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                    Submit Another Application
-                </button>
-            </motion.div>
-        )
+        return <div className="animate-pulse bg-muted h-96 rounded-xl"></div>
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-8 rounded-xl shadow-lg">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 bg-card p-8 rounded-2xl shadow-xl border border-border/50">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Personal Information */}
                 <div className="space-y-2">
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
-                    <input
+                    <label htmlFor="firstName" className="block text-sm font-medium text-foreground">First Name</label>
+                    <Input
                         {...register('firstName')}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="John"
+                        icon={<User className="w-4 h-4" />}
                     />
-                    {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName.message}</p>}
+                    {errors.firstName && <p className="text-destructive text-sm">{errors.firstName.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
-                    <input
+                    <label htmlFor="lastName" className="block text-sm font-medium text-foreground">Last Name</label>
+                    <Input
                         {...register('lastName')}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="Doe"
+                        icon={<User className="w-4 h-4" />}
                     />
-                    {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
+                    {errors.lastName && <p className="text-destructive text-sm">{errors.lastName.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                    <input
+                    <label htmlFor="email" className="block text-sm font-medium text-foreground">Email</label>
+                    <Input
                         {...register('email')}
                         type="email"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="john@example.com"
+                        icon={<Mail className="w-4 h-4" />}
                     />
-                    {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                    {errors.email && <p className="text-destructive text-sm">{errors.email.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
-                    <input
+                    <label htmlFor="phone" className="block text-sm font-medium text-foreground">Phone Number</label>
+                    <Input
                         {...register('phone')}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="+234..."
+                        icon={<Phone className="w-4 h-4" />}
                     />
-                    {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+                    {errors.phone && <p className="text-destructive text-sm">{errors.phone.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="age" className="block text-sm font-medium text-gray-700">Age</label>
-                    <input
+                    <label htmlFor="age" className="block text-sm font-medium text-foreground">Age</label>
+                    <Input
                         {...register('age', { valueAsNumber: true })}
                         type="number"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="25"
+                        icon={<Calendar className="w-4 h-4" />}
                     />
-                    {errors.age && <p className="text-red-500 text-sm">{errors.age.message}</p>}
+                    {errors.age && <p className="text-destructive text-sm">{errors.age.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="ninNumber" className="block text-sm font-medium text-gray-700">NIN Number</label>
-                    <input
+                    <label htmlFor="ninNumber" className="block text-sm font-medium text-foreground">NIN Number</label>
+                    <Input
                         {...register('ninNumber')}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="11-digit NIN"
+                        icon={<Hash className="w-4 h-4" />}
                     />
-                    {errors.ninNumber && <p className="text-red-500 text-sm">{errors.ninNumber.message}</p>}
+                    {errors.ninNumber && <p className="text-destructive text-sm">{errors.ninNumber.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="stateOfOrigin" className="block text-sm font-medium text-gray-700">State of Origin</label>
-                    <input
+                    <label htmlFor="stateOfOrigin" className="block text-sm font-medium text-foreground">State of Origin</label>
+                    <Input
                         {...register('stateOfOrigin')}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="Lagos"
+                        icon={<MapPin className="w-4 h-4" />}
                     />
-                    {errors.stateOfOrigin && <p className="text-red-500 text-sm">{errors.stateOfOrigin.message}</p>}
+                    {errors.stateOfOrigin && <p className="text-destructive text-sm">{errors.stateOfOrigin.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                    <label htmlFor="stateOfResident" className="block text-sm font-medium text-gray-700">State of Residence</label>
-                    <input
+                    <label htmlFor="stateOfResident" className="block text-sm font-medium text-foreground">State of Residence</label>
+                    <Input
                         {...register('stateOfResident')}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         placeholder="Abuja"
+                        icon={<MapPin className="w-4 h-4" />}
                     />
-                    {errors.stateOfResident && <p className="text-red-500 text-sm">{errors.stateOfResident.message}</p>}
+                    {errors.stateOfResident && <p className="text-destructive text-sm">{errors.stateOfResident.message}</p>}
                 </div>
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="occupation" className="block text-sm font-medium text-gray-700">Current Occupation</label>
-                <input
+                <label htmlFor="occupation" className="block text-sm font-medium text-foreground">Current Occupation</label>
+                <Input
                     {...register('occupation')}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     placeholder="Student, Employed, etc."
+                    icon={<Briefcase className="w-4 h-4" />}
                 />
-                {errors.occupation && <p className="text-red-500 text-sm">{errors.occupation.message}</p>}
+                {errors.occupation && <p className="text-destructive text-sm">{errors.occupation.message}</p>}
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700">Full Address</label>
-                <textarea
+                <label htmlFor="location" className="block text-sm font-medium text-foreground">Full Address</label>
+                <Textarea
                     {...register('location')}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     rows={2}
                     placeholder="Your residential address"
+                    className="resize-none"
                 />
-                {errors.location && <p className="text-red-500 text-sm">{errors.location.message}</p>}
+                {errors.location && <p className="text-destructive text-sm">{errors.location.message}</p>}
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="motivation" className="block text-sm font-medium text-gray-700">Motivation</label>
-                <textarea
+                <label htmlFor="motivation" className="block text-sm font-medium text-foreground">Motivation</label>
+                <Textarea
                     {...register('motivation')}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     rows={3}
                     placeholder="Why do you want to join this programme?"
+                    className="resize-none"
                 />
-                {errors.motivation && <p className="text-red-500 text-sm">{errors.motivation.message}</p>}
+                {errors.motivation && <p className="text-destructive text-sm">{errors.motivation.message}</p>}
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="experience" className="block text-sm font-medium text-gray-700">Previous Experience</label>
-                <textarea
+                <label htmlFor="experience" className="block text-sm font-medium text-foreground">Previous Experience</label>
+                <Textarea
                     {...register('experience')}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     rows={3}
                     placeholder="Do you have any prior digital skills experience?"
+                    className="resize-none"
                 />
-                {errors.experience && <p className="text-red-500 text-sm">{errors.experience.message}</p>}
+                {errors.experience && <p className="text-destructive text-sm">{errors.experience.message}</p>}
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="goals" className="block text-sm font-medium text-gray-700">Future Goals</label>
-                <textarea
+                <label htmlFor="goals" className="block text-sm font-medium text-foreground">Future Goals</label>
+                <Textarea
                     {...register('goals')}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     rows={3}
                     placeholder="What do you hope to achieve after this programme?"
+                    className="resize-none"
                 />
-                {errors.goals && <p className="text-red-500 text-sm">{errors.goals.message}</p>}
+                {errors.goals && <p className="text-destructive text-sm">{errors.goals.message}</p>}
             </div>
 
             <div className="space-y-2">
-                <label htmlFor="referralCode" className="block text-sm font-medium text-gray-700">Referral Code (Optional)</label>
-                <input
+                <label htmlFor="referralCode" className="block text-sm font-medium text-foreground">Referral Code (Optional)</label>
+                <Input
                     {...register('referralCode')}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     placeholder="Enter code if you have one"
+                    icon={<Target className="w-4 h-4" />}
                 />
-                {errors.referralCode && <p className="text-red-500 text-sm">{errors.referralCode.message}</p>}
+                {errors.referralCode && <p className="text-destructive text-sm">{errors.referralCode.message}</p>}
             </div>
 
-            <button
+            {submitError && (
+                <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg text-destructive text-sm">
+                    {submitError}
+                </div>
+            )}
+
+            <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full h-12 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
             >
                 {isSubmitting ? (
                     <>
@@ -231,7 +222,7 @@ export function ApplicationForm() {
                 ) : (
                     'Submit Application'
                 )}
-            </button>
+            </Button>
         </form>
     )
 }
