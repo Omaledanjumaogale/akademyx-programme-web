@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx convex codegen --url \"$NEXT_PUBLIC_CONVEX_URL\" && next build",
+    "build": "node scripts/prebuild.js && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
