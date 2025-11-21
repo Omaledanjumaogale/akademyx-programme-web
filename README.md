@@ -21,13 +21,14 @@ This application is built with enterprise-grade standards including:
 - npm or yarn
 - Convex account
 - WorkOS account
+- Cloudflare account (for deployment)
 
 ## 🛠️ Getting Started
 
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Omaledanjumaogale/akademyx-programme-web.git
 cd akademyx-programme-web
 ```
 
@@ -96,10 +97,11 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed architecture documentation
 - **Type Safety**: TypeScript + Zod
 - **Testing**: Vitest + React Testing Library
 - **CI/CD**: GitHub Actions
+- **Deployment**: Cloudflare Pages
 
 ## 📁 Project Structure
 
-```
+```text
 ├── .github/workflows/     # CI/CD pipelines
 ├── convex/               # Backend (mutations, queries, schema)
 ├── public/               # Static assets
@@ -108,10 +110,27 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed architecture documentation
 │   ├── components/      # React components
 │   ├── lib/             # Utilities and shared logic
 │   └── test/            # Test setup
+├── wrangler.toml        # Cloudflare configuration
 ├── ARCHITECTURE.md      # Architecture documentation
 ├── TESTING.md          # Testing guide
 └── README.md           # This file
 ```
+
+## 🚢 Deployment
+
+### Cloudflare Pages (Recommended)
+
+1. Push your code to GitHub
+2. Connect repository in Cloudflare Pages dashboard
+3. Configure build settings (Next.js preset)
+4. Add environment variables
+5. Deploy!
+
+See [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md) for detailed deployment instructions.
+
+### Environment Variables for Production
+
+Make sure to set all environment variables from `.env.example` in Cloudflare Pages dashboard.
 
 ## 🔒 Security
 
@@ -122,19 +141,6 @@ This application implements multiple security layers:
 - **Input Validation**: Zod schemas on client and server
 - **Environment Validation**: Type-safe env vars
 - **Error Handling**: Graceful error boundaries
-
-## 🚢 Deployment
-
-### Vercel (Recommended)
-
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy!
-
-### Environment Variables for Production
-
-Make sure to set all environment variables from `.env.example` in your deployment platform.
 
 ## 📊 CI/CD
 

@@ -1,0 +1,19 @@
+name = "akademyx-programme-web"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = ".next"
+
+[env.production]
+name = "akademyx-programme-web"
+
+[env.production.vars]
+NODE_VERSION = "18"
+
+# Build configuration
+[build]
+command = "npm run build"
+
+# Routes configuration for Next.js
+[[redirects]]
+from = "/*"
+to = "/:splat"
+status = 200
