@@ -6,7 +6,6 @@ pages_build_output_dir = ".next"
 name = "akademyx-programme-web"
 
 [env.production.vars]
-NODE_VERSION = "20"
 
 # Build configuration
 [build]
