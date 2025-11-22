@@ -7,7 +7,6 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
   transpilePackages: ['@workos-inc/authkit-nextjs'],
-  output: 'standalone',
 
   // Security headers
   async headers() {
