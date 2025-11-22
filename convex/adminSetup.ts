@@ -130,7 +130,7 @@ export const createSampleData = mutation({
                 goals: "Become a full-stack developer",
                 status: "pending",
                 referralCode: "REF001",
-                referralType: "referral",
+                referralType: "individual",
                 partnerId: undefined,
                 amount: 50000,
                 paymentStatus: "pending",
