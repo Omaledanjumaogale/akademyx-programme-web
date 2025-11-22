@@ -58,7 +58,7 @@ token.txt
 .trae/
 
 # Convex
-convex/_generated
+
 
 # OS generated files
 .DS_Store
