@@ -44,9 +44,11 @@ Go to **Cloudflare Dashboard** → **Pages** → **akademyx-programme-web** → 
 | Setting | Value |
 |---------|-------|
 | **Framework preset** | Next.js |
-| **Build command** | `npm run build` |
+| **Build command** | `npm run pages:build` |
 | **Build output directory** | `.vercel/output/static` |
 | **Node.js version** | `20` |
+
+> **Note:** We use `npm run pages:build` instead of the default `npm run build` to avoid recursion errors. The `pages:build` script runs the Cloudflare adapter, which internally runs your standard build script.
 
 ### Step 2: Environment Variables (CRITICAL!)
 
