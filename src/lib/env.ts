@@ -17,7 +17,7 @@ const envSchema = z.object({
 
 export type Env = z.infer<typeof envSchema>
 
-// Validate environment variables at build time
+// Validate environment variables
 export function validateEnv(): Env {
     try {
         return envSchema.parse(process.env)
@@ -33,5 +33,8 @@ export function validateEnv(): Env {
     }
 }
 
-// Export validated env (only call this in server-side code)
-export const env = validateEnv()
+// Only validate env during runtime, not during build
+// During build, Next.js doesn't have access to runtime-only env vars
+const isBuild = process.env.NEXT_PHASE === 'phase-production-build'
+
+export const env = isBuild ? ({} as Env) : validateEnv()
