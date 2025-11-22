@@ -67,7 +67,7 @@ export const createSampleData = mutation({
         const now = Date.now();
 
         // Create sample applications
-        const sampleApplications = [
+        const sampleApplications: Array<Parameters<typeof ctx.db.insert<"applications">>[1]> = [
             {
                 firstName: "John",
                 lastName: "Doe",
@@ -263,3 +263,4 @@ export const clearSampleData = mutation({
         };
     },
 });
+
