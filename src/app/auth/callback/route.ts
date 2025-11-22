@@ -1,16 +1,13 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
+// Explicitly disable static optimization
 export const dynamic = 'force-dynamic'
-export const runtime = 'nodejs'
+export const dynamicParams = true
+export const revalidate = 0
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     // Handle WorkOS callback - redirect to homepage
-    // Use defensive URL construction to handle build-time execution
-    try {
-        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://akademyx-programme-web.pages.dev'
-        return NextResponse.redirect(new URL('/', baseUrl))
-    } catch (error) {
-        // Fallback for build-time or if URL is invalid
-        return NextResponse.redirect('https://akademyx-programme-web.pages.dev')
-    }
+    const url = request.nextUrl.clone()
+    url.pathname = '/'
+    return NextResponse.redirect(url)
 }
