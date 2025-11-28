@@ -43,6 +43,20 @@
 
 - `src/components/admin/AdminDashboard.tsx` - Line 117
 
+### 4. **Admin Login Navigation**
+
+**Problem**: The "Admin Login" button in the header was redirecting to `/dashboard/admin` directly, which would fail if not authenticated, or to the generic login page.
+
+**Solution**: Created a dedicated admin login route that redirects to WorkOS with the correct return path:
+
+- Created `src/app/auth/admin-login/route.ts`
+- Updated `src/components/LandingHeader.tsx` to point to this route
+
+**Files Modified**:
+
+- `src/app/auth/admin-login/route.ts`
+- `src/components/LandingHeader.tsx`
+
 ## Current Status 🎉
 
 ✅ **Admin Dashboard is Now Accessible**
