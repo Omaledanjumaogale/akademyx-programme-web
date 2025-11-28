@@ -22,6 +22,20 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Akademyx Masterclass Programme',
   description: 'A 21-day intensive digital skills accelerator designed to empower African youths with futuristic career paths, multiple income streams, and real-world digital entrepreneurship.',
+  manifest: '/manifest.json',
+  themeColor: '#8B5CF6',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+    viewportFit: 'cover',
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Akademyx',
+  },
   openGraph: {
     title: 'Akademyx Masterclass Programme',
     description: 'Empowering African youths with digital skills.',
@@ -47,7 +61,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
-      <body className="min-h-screen bg-background font-sans antialiased selection:bg-primary selection:text-primary-foreground">
+      <body className="min-h-screen bg-background font-sans antialiased selection:bg-primary selection:text-primary-foreground pb-16 lg:pb-0">
         <AuthProvider>
           <ConvexClientProvider>
             <ErrorBoundary>
