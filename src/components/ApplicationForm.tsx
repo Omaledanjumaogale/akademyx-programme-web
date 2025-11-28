@@ -32,9 +32,9 @@ export function ApplicationForm() {
         setIsSubmitting(true)
         setSubmitError(null)
         try {
-            await createApplication(data)
+            const applicationId = await createApplication(data)
             reset()
-            router.push('/checkout')
+            router.push(`/checkout?applicationId=${applicationId}`)
         } catch (error) {
             console.error('Error submitting application:', error)
             setSubmitError('Failed to submit application. Please try again.')

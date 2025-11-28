@@ -67,15 +67,7 @@ export const referralPartnerSchema = z.object({
 
 export type ReferralPartnerData = z.infer<typeof referralPartnerSchema>
 
-// Payment form schema
-export const paymentFormSchema = z.object({
-    amount: z.number().min(1000, 'Minimum amount is 1000'),
-    email: emailSchema,
-    paymentMethod: z.enum(['card', 'transfer']),
-    transactionReference: z.string().optional(), // For bank transfers
-})
 
-export type PaymentFormData = z.infer<typeof paymentFormSchema>
 
 // Utility function to safely parse and validate data
 export function validateData<T>(schema: z.ZodSchema<T>, data: unknown): { success: true; data: T } | { success: false; errors: z.ZodError } {

@@ -89,7 +89,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Admin Dashboard */}
                     {user.role === 'admin' && (
-                        <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer group border-border/50 hover:-translate-y-1" onClick={() => router.push('/admin')}>
+                        <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer group border-border/50 hover:-translate-y-1" onClick={() => router.push('/dashboard/admin')}>
                             <CardHeader>
                                 <div className="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-purple-500/20 transition-colors">
                                     <User className="w-7 h-7 text-purple-600" />

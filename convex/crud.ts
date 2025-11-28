@@ -43,7 +43,7 @@ export const createApplication = mutation({
 export const updateApplicationStatus = mutation({
   args: {
     applicationId: v.id("applications"),
-    status: v.union(v.literal("pending"), v.literal("approved"), v.literal("rejected")),
+    status: v.union(v.literal("pending"), v.literal("approved"), v.literal("rejected"), v.literal("paid")),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -74,6 +74,25 @@ export const getApplicationById = query({
     if (!identity) throw new Error("Unauthorized");
 
     return await ctx.db.get(args.applicationId);
+  },
+});
+
+export const getPublicApplicationInfo = query({
+  args: { applicationId: v.id("applications") },
+  handler: async (ctx, args) => {
+    const app = await ctx.db.get(args.applicationId);
+    if (!app) return null;
+
+    // Return only necessary info for payment
+    return {
+      _id: app._id,
+      firstName: app.firstName,
+      lastName: app.lastName,
+      email: app.email,
+      phone: app.phone,
+      amount: app.amount,
+      status: app.status,
+    };
   },
 });
 
