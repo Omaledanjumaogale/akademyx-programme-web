@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from 'convex/react'
@@ -15,14 +15,9 @@ import { Textarea } from '@/components/ui/textarea'
 
 export function ApplicationForm() {
     const router = useRouter()
-    const [isMounted, setIsMounted] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitError, setSubmitError] = useState<string | null>(null)
     const createApplication = useMutation(api.crud.createApplication)
-
-    useEffect(() => {
-        setIsMounted(true)
-    }, [])
 
     const {
         register,
@@ -46,10 +41,6 @@ export function ApplicationForm() {
         } finally {
             setIsSubmitting(false)
         }
-    }
-
-    if (!isMounted) {
-        return <div className="animate-pulse bg-muted h-96 rounded-xl"></div>
     }
 
     return (

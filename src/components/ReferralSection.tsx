@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from 'convex/react'
@@ -12,15 +12,10 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
 export function ReferralSection() {
-    const [isMounted, setIsMounted] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitError, setSubmitError] = useState<string | null>(null)
     const [submitSuccess, setSubmitSuccess] = useState(false)
     const createReferralPartner = useMutation(api.crud.createReferralPartner)
-
-    useEffect(() => {
-        setIsMounted(true)
-    }, [])
 
     const {
         register,
@@ -50,10 +45,6 @@ export function ReferralSection() {
         } finally {
             setIsSubmitting(false)
         }
-    }
-
-    if (!isMounted) {
-        return <div className="animate-pulse bg-muted h-96 rounded-xl"></div>
     }
 
     if (submitSuccess) {

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { motion } from "@/components/motion-wrapper"
 import LandingHeader from "@/components/LandingHeader"
 import WhatsAppIntegration from "@/components/WhatsAppIntegration"
+import { Footer } from "@/components/Footer"
 import {
   BookOpen,
   Users,
@@ -324,6 +325,8 @@ export default function Home() {
           <ReferralSection />
         </div>
       </section>
+
+      <Footer />
 
       <WhatsAppIntegration
         phoneNumber="+2349025152818"

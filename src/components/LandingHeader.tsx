@@ -14,8 +14,10 @@ export default function LandingHeader() {
 
   const handleLogin = (type: 'user' | 'admin') => {
     if (type === 'admin') {
-      router.push('/dashboard/admin')
+      // Redirect to admin-specific login route
+      router.push('/auth/admin-login')
     } else {
+      // Use the login function from AuthProvider which redirects to /auth/login
       login()
     }
   }
